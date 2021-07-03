@@ -46,11 +46,15 @@ void draw(){
   //drawLine();  
       textSize(24);
     fill(255,0,0);
-     text("contY: "+shape.contY+"   contX: "+shape.contX, 100,40);
+     text("contX: "+shape.contX+"   contY: "+shape.contY, 100,40);
      text("initial contX: "+initContX+"  final contX:  "+ finalContX,100,70);
-     text("Screen Width: "+w+" speed: "+shape.incY,100,100);
+     text("Screen Width: "+w+" speed: "+shape.incY+ "  unit: "+unit,100,100);
+     for(i=0;i<shape.borderDX.length;i++){
+       text("borderDX["+i+"]= "+shape.borderDX[i]+"  borderDY["+i+"]= "+shape.borderY[i],100,140+i*40);
+     }
+
      for(i=0;i<shape.borderX.length;i++){
-       text("borderX["+i+"]= "+shape.borderX[i]+"  borderY["+i+"]= "+shape.borderY[i],100,140+i*40);
+       text("borderX["+i+"]= "+shape.borderX[i]+"  borderY["+i+"]= "+shape.borderY[i],100,300+i*40);
      }
   
   if(!shape.desc){
