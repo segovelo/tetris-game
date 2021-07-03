@@ -5,24 +5,28 @@ class Shape {
   int unit;
   int rows, columns;
   int type;
-  boolean desc, bottom;;
+  int[] borderX;
+  int[] borderY;
+  boolean desc, bottom, checkCell;
   color colour;
   ArrayList<ArrayList<Boolean>> matrix = new ArrayList<ArrayList<Boolean>>();
 
   public Shape(int t, int x, int y, int unit){
     this.x = x;
     this.y = y;
-    this.contX = 0;
-    this.contY = (int)(x-w/3)/unit;
-    this.incY = 2;
     this.unit = unit;
+    this.incY = unit/20;    
     this.type = (int)random(1,6);
     this.colour = color((int)random(20,255),(int)random(20,255),(int)random(20,255));
     this.setMatrix(t);
     this.rows = matrix.size();
     this.columns = matrix.get(0).size();
+    this.contX = rows-1;
+    this.contY = (int)((x-w/3)/unit);
+    this.borders();
     this.desc = true;
     this.bottom = false;
+    this.checkCell = true;
   }
   
   public void render(){
@@ -38,14 +42,25 @@ class Shape {
   } // End of render()
   
    public void update(){
-     int i,j;
-     if(desc && y<(9*h/10-(rows*unit))){
+     int i,j, upper=2*incY; 
+     if((y+rows*unit-offsetY)%unit < upper & (y+rows*unit-offsetY)%unit > 2 & checkCell){
+       bordersDown();
+       checkCell = false;
+       checkDown();
+     }
+     
+     if( !checkCell & (y+rows*unit-offsetY )%unit > upper)checkCell = true;
+     if(desc && y<(offsetY+16*unit-(rows*unit))){
        //if(container[contX+rows][contY])
-        this.y += incY;
+       if(y>(offsetY+16*unit-(rows*unit)-incY)){
+           y = (offsetY+16*unit-(rows*unit));
+       }
+           else this.y += incY;
            
      }  // End if(desc)   
       else{ desc = false;
            // bottom = true;
+           y = (offsetY+16*unit-(rows*unit));
            for(i=0;i<rows;i++){
              for(j=0;j<columns;j++){
                 container[i][j] = matrix.get(i).get(j).getBool();
@@ -79,28 +94,25 @@ class Shape {
              matrix.add(temp);
           }  
         // this.x += (matrix.size() - this.rows) * this.unit/2;
-         this.y += (matrix.get(0).size() - this.columns) * this.unit/2; 
+         this.y += (matrix.get(0).size() - this.columns) * this.unit/2;         
          this.rows = matrix.size();
          this.columns = matrix.get(0).size();
+         this.borders();
          if(x+columns*unit>2*w/3) x=2*w/3 - columns*unit;
-         for(j=0;j<columns;j++){
-           i=0;
-           do{ 
-           if(matrix.get(rows- ++i).get(j).getBool()){
-              
-            } 
-           }while(!matrix.get(rows-i).get(j).getBool());
-         } 
   }  // End of rotateRight()
   
   public void moveR(){
-    if(shape.x+shape.columns*unit < 2*w/3)
+    if(shape.x+shape.columns*unit < 2*w/3){
       shape.x += unit;
+      contY++;
+    }
   }
   
   public void moveL(){
-    if(shape.x > w/3)
+    if(shape.x > w/3){
         shape.x -= unit;
+        contY--;
+    }
   }
   
   public void setMatrix(int t){
@@ -184,6 +196,36 @@ class Shape {
       } 
    }  // end of matrix5()
  
+   public void checkDown(){
+
+   } // End of checkDown()
+ 
+   public void borders(){
+     int i,j;
+     borderX = new int[columns];
+     borderY = new int[columns];
+     setContX();
+     for(j=0;j<columns;j++){
+        i=0;
+        do{ 
+           if(matrix.get(rows- ++i).get(j).getBool()){
+               borderX[j] = contX-i+1;
+               borderY[j] = contY+j;
+            } 
+          }while(rows-i>=0 && !matrix.get(rows-i).get(j).getBool());
+      }    
+   } // End of borders()
+   
+   public void bordersDown(){
+     setContX();
+     for(j=0;j<columns;j++){
+        borderX[j] = contX-rows+1;
+     }     
+   }
+   
+   public void setContX(){
+     contX = ((y+rows*unit-offsetY)/unit);
+   } // End of setContX()
 }
 
 
